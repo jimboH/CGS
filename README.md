@@ -1,2 +1,2 @@
 # CGS
-Contextual Geometric Structures
+Contextual Geometric Structures using parcels
