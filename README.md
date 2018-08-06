@@ -1,19 +1,30 @@
-# CGS
-Contextual Geometric Structures using parcels
+# Contextual Geometric Structures (CGS): a hybrid modeling approach
 
 ### Simulation Goals
-The goals of CGS are the followings:  
-1. To simulate how words and meanings change with respect to time.
-2. To find out the factors that affect the meaning changing rates of words using the concept of finite state machine and genetic algorithm.
+The goals of this CGS-based project are the following:
 
-### Concepts
+1. To simulate how both words and their meanings evolve in a synthetic cultural context.
+
+2. To discover factors that affect changing rates of word usage and meaning in a synthetic culture, using the concept of finite state machines, hydrodynamics, and genetic algorithms.
+
+### Key Concepts
 
 #### Flow field:
-This project simulates with particles and environmental flow field. Each particle has a kernel, which contains a single word and a meaning of the word. Particles within the field are pushed to collide together by the flows.
+This project utilizes particles and an environmental flow field to simulate the diversity of words and meanings in a population. Each particle is associated with a kernel, which contains a single word and a meaning of the word. Particles within the field flow freely, but also tend to collide in a flow-dependent manner.
 
 #### Words:  
-In CGS, a word may have many meanings, but a particle can only have one word and meaning pair. There are different mechanisms for words and meanings respectively. For words, the idea of finite state machine (FSM) is implemented to simulate the behavior of word frequency alteration. The concept is described as the image below. Words may be in 'active' or 'inactive' states. When a word is in 'active' state, it has a possibility of p to transform into 'inactive' state and a possibility of 1-p to maintain the same whenever a triggering event happens. On the other hand, when a word is in 'inactive' state, it always transform back into 'active' state after a triggering event. The triggering event in CGS is collision of particles. Something worth noticing is that the transformation possibility p should decrease with time in order to simulate the scenario that words are more likely to disappear when they are just created, but gradually turn out to be stabler afterwards.  
-![](/image/word.jpg)  
+In this model, a single word may have many meanings, but a particle represents a single word and meaning pair (word:meaning). There are different mechanisms for words and meanings, respectively. 
+
+For words, a finite state machine (FSM) is implemented to simulate the behavior of word-frequency alteration. The concept is described in Figure 1. Words may be in either 'active' or 'inactive' states. When a word is in an 'active' state, it may transition to an 'inactive' state at a probability of _p_. This active state may also be maintained after a triggering event with a probability of 1-_p_. 
+
+When a word is in an 'inactive' state, it always transforms to the 'active' state after a triggering event. While activation after a triggering event is deterministic, the triggering events themselves (a collision of particles) occur at a rate _q_, and is dependent on the number of particles in the simulation. 
+
+As the simulation evolves, the active-to-inactive probability (_p_) tends to decrease with time. This is consistent with the idea that words are more likely to disappear when they are young and at low-frequencies in the population. As words persist with respect to time, their frequency is more likely to stabilize as well.
+
+![](/image/word.jpg)
+Figure 1. Probabilities of transitions between active and inactive states.
 
 #### Meanings:
-In CGS, every meaning of a word is given a fitness value, which is used for genetic algorithm. Mutation occurs with given period and changes the meaning of a word to another meaning of the same word with possibility proportional to the meaning's fitness value. Therefore, if a meaning has a higher fitness value, the other meanings have higher chances to transform into this meaning.  
+In CGS, every word:meaning combination (a single particle) is assigned a fitness value, which is used for the genetic algorithm component. Mutation occurs at a given rate (_\mu_) and changes the meaning of a word to another meaning of the same word with a probability proportional to the meaning's fitness value. 
+
+We can illustrate this by considering a group of meanings for a single word: if a given meaning has a higher fitness value, the other meanings have higher chances to transform into this meaning upon mutation.
