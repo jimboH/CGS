@@ -5,7 +5,8 @@ from CGS_parcels.kernel import kernel
 from IPython.display import display
 
 class CGS_field_initializer(widgets.Tab):
-    
+    """Widgets for CGS to allow easy usage.
+    """
     def __init__(self,**kwargs):
         self._set_tab()
         style = {'description_width': 'initial'}
@@ -70,8 +71,7 @@ class CGS_field_initializer(widgets.Tab):
     
     def build(self,word_meaning_freq_fit=None,collision_thres=1e-4,mutation_period=5,field_set=None,particle_set=None,):
         """
-        word_meaning_freq_fit={'max':(0.7,[('a',0.15,20),('b',0.2,30),('c',0.65,10)]),'min':(0.2,[('a',0.15,20),('c',0.85,40)])\
-        ,'mo':(0.9,[('a',0.15,20),('b',0.2,30),('c',0.65,10)])}
+        Function starting from initializing CGS_field to simulation.
         """
         if word_meaning_freq_fit == None:
             raise RuntimeError('Please input word_meaning_freq_fit.')
@@ -134,4 +134,7 @@ class CGS_field_initializer(widgets.Tab):
         return self.CGS.word_freq_table()
         
     def display(self):
+        """
+        Display widgets in jupyter notebook
+        """
         display(self)

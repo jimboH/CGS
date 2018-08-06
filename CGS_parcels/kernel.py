@@ -6,12 +6,13 @@ from CGS_parcels.advection import self_AdvectionRK4
 from datetime import timedelta,datetime 
 
 class word_state:
+    
     def __init__(self,word,prob,status,meaning=None,fitness=None,color=None):
         """
-        prob = probability to change from status A to status B
-        status = single character to present the status: A for activate, B for inactivate
-        word = the word it represents
-        meaning = a list presenting in the form:[['fruit','food'],1]
+        prob = probability to change from status 'active' to status 'inactive'.
+        status = single character to present the status: A for activate, B for inactivate.
+        word = the word it represents.
+        meaning = the meaning it represents.
         """
         self.word = word
         self.prob = prob
@@ -22,8 +23,8 @@ class word_state:
     
     def transition(self):
         """
-        Check whether the kernel is activated (status A) or inactivated (status B)
-        Then do the transition according to probability given before
+        Check whether the kernel is activated (status A) or inactivated (status B).
+        Then do the transition according to given probability.
         """
         
         if self.status == 'A':
@@ -35,10 +36,9 @@ class word_state:
             
     def mutation(self,total_fitness,all_meanings):
         """
-        Mutation that change the meaning of a word.
-        all_meanings: {'max': [['a', 20], ['b', 30], ['c', 10]], 'mo': [['a', 20], ['b', 30], ['c', 10]],\
-        'min': [['a', 20], ['c', 40]]}
+        Mutation that change the meaning of a word, but does not change the word.
         """
+        
         fitnesses = [attr[1] for attr in all_meanings]
         odds = [float(fit)/total_fitness for fit in fitnesses]
         opt = random.random()
@@ -50,7 +50,7 @@ class word_state:
 
 class kernel(parcels.ScipyParticle):
     """Inherit kernels from ScipyParticle in parcels.
-    Add additional n-dimensional kernel.
+    Add additional functionalities for finite state machine, word_meaning and color settings.
     """
     def __init__(self, lon, lat, fieldset, depth=0., time=0., cptr=None):
         """The nd_array serves as additional attributes of ScipyParticle.
@@ -74,7 +74,8 @@ class kernel(parcels.ScipyParticle):
  
 class kernel_set(parcels.ParticleSet):
     """
-    A={'max':(0.7,[('a',0.15,20),('b',0.2,30),('c',0.65,10)]),'min':(0.2,[('a',0.15,20),('c',0.85,40)])}
+    Class inherited from parcels.ParticleSet.
+    Assign each kernel with word, meaning, fitness and color.
     """
     def __init__(self, fieldset, pclass=kernel, lon=[], lat=[], depth=None, time=None, repeatdt=None):
         super(kernel_set,self).__init__(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat, depth=None, time=None, repeatdt=None)
@@ -150,30 +151,28 @@ class kernel_set(parcels.ParticleSet):
     
     def count_states(self):
         meaning_states = {}
-        word_states = {}
         
         for idx in self.particles:
             st = idx.word_state
-            if (st.word,st.meaning) in meaning_states:
-                if st.status == 'A':
-                    meaning_states[(st.word,st.meaning)] += 1
+            if ('--'.join([st.word,st.meaning]),'active') in meaning_states:
+                meaning_states[('--'.join([st.word,st.meaning]),'active')] += 1
+                meaning_states[('--'.join([st.word,st.meaning]),'total')] += 1
+            elif ('--'.join([st.word,st.meaning]),'inactive') in meaning_states:
+                meaning_states[('--'.join([st.word,st.meaning]),'inactive')] += 1
+                meaning_states[('--'.join([st.word,st.meaning]),'total')] += 1
             else:
                 if st.status == 'A':
-                    meaning_states[(st.word,st.meaning)] = 1
+                    meaning_states[('--'.join([st.word,st.meaning]),'active')] = 1
                 else:
-                    meaning_states[(st.word,st.meaning)] = 0
-        for pair,count in meaning_states.items():
-            word = pair[0]
-            if word not in word_states:
-                word_states[word] = count
-            else:
-                word_states[word] += count
-        return word_states,meaning_states
+                    meaning_states[('--'.join([st.word,st.meaning]),'inactive')] = 1
+                meaning_states[('--'.join([st.word,st.meaning]),'total')] = 1
+        return meaning_states
         
     
     def execute(self, collision_thres=0.0001, mutation_period=5, pyfunc=self_AdvectionRK4, endtime=None, runtime=None, dt=1.,
                 moviedt=None, recovery=None, output_file=None, movie_background_field=None):
-        
+        """Overload execute function from parcels.particleset module.
+        """
         # check if pyfunc has changed since last compile. If so, recompile
         if self.kernel is None or (self.kernel.pyfunc is not pyfunc and self.kernel is not pyfunc):
             # Generate and store Kernel
@@ -285,18 +284,18 @@ class kernel_set(parcels.ParticleSet):
             if dt == 0:
                 break
             
-            if (mutation_time<10):
-                w_s,m_s=self.count_states()
-                #print(w_s,m_s)
-            ## additional code
-            collision = self._collide(collision_thres)
+            
+            
+            ## Mutation with period mutation_period
             mutation_time += 1
             if mutation_time % mutation_period == 0:
                 self._random_mutation()
+            ## Check if collsion conditions are met
+            collision = self._collide(collision_thres)
             for cols in collision:
-                cols.word_state.transition()
-            word_states, meaning_states = self.count_states()
-            #tot_counts = sum(word_states.values())
+                cols.word_state._transition()
+            ## Count the amounts of word_meaning kernels that are in different states
+            meaning_states = self.count_states()
             tot_counts = len(self.particles)
             for key in meaning_states.keys():
                 meaning_states[key] = float(meaning_states[key])/tot_counts
@@ -305,7 +304,8 @@ class kernel_set(parcels.ParticleSet):
             
         if output_file:
             output_file.write(self, time)
-        
+
+        ## Return word_meaning data in the form of pandas.DataFrame
         df =pd.DataFrame(plot_data)
         df.insert(0,'time',[str(i) for i in intervals])
         return df

@@ -3,7 +3,9 @@ import numpy as np
 
 def self_AdvectionRK4(particle, fieldset, time, dt):
     """Advection of particles using fourth-order Runge-Kutta integration.
-    Function needs to be converted to Kernel object before execution"""
+    Overload function from parcels.kernels.advection module.
+    Randomly deploy the particles that run out of boundary."""
+    
     u_max = 2*np.amax(fieldset.U.data)*dt
     u_min = 2*np.amin(fieldset.U.data)*dt
     v_max = 2*np.amax(fieldset.V.data)*dt

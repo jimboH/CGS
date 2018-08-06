@@ -5,7 +5,17 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from netCDF4 import Dataset
 
+def _sigmoid(x,amp):
+    """Sigmoid function used internally for determining colors of particles.
+    """
+    return 1/(1+np.exp(amp*x))
+
 def plot_kernel_trajectories(filename, interval=200):
+    """ Present the animation of kernel moving trajectories.
+    """
+
+    clrs = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', \
+            'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
     
     pfile = Dataset(filename, 'r')
     lon = np.ma.filled(pfile.variables['lon'], np.nan)
@@ -22,6 +32,10 @@ def plot_kernel_trajectories(filename, interval=200):
     pairs = [(word[i,j]+':'+meaning[i,j]) for i in range(word_shape[0]) for j in range(word_shape[1])]
     legends = list(set(pairs))
     wrd_mng = np.reshape(np.array(pairs),word_shape)
+
+    ## If amount of word_meaning pairs is not greater than that of default colors, use default colors.
+    ## Otherwise assign the colors with sigmoid function.
+    use_default_color = True if len(legends)<=len(clrs) else False
         
     fig = plt.figure()
     ax = plt.axes(xlim=(np.nanmin(lon), np.nanmax(lon)), ylim=(np.nanmin(lat), np.nanmax(lat)))
@@ -42,15 +56,20 @@ def plot_kernel_trajectories(filename, interval=200):
                 idx = wrd_mng[:,t]==legends[j]
                 lat_ = np.reshape(np.array(lat[idx],dtype=np.float32),[-1,time_len])
                 lon_ = np.reshape(np.array(lon[idx],dtype=np.float32),[-1,time_len])
-                color_ = np.reshape(np.array(color[idx],dtype=np.float32),[-1,time_len])
                 time_ = np.reshape(np.array(time[idx],dtype=np.float32),[-1,time_len])
                 b = time_ == plottimes[t]
-                clr = color_[b][0]
-                clr = [1-clr,clr/2,clr]
+                if not use_default_color:
+                    color_ = np.reshape(np.array(color[idx],dtype=np.float32),[-1,time_len])
+                    clr = color_[b][0]
+                    clrp = [_sigmoid(3*np.abs(clr-0.25)-0.5,-5),_sigmoid(3*np.abs(clr-0.5)-0.75,-5),\
+                            _sigmoid(3*np.abs(clr-0.75)-1.0,-5)]
+                    clrp = matplotlib.colors.to_hex(clrp)
+                else:
+                    clrp = clrs[j]
+                ax.scatter(lon_[b], lat_[b], c=clrp, s=60, label=legends[j])
+                ax.legend(loc=1)
             except:
-                continue
-            ax.scatter(lon_[b], lat_[b], s=60, c=clr, label=legends[j])
-            ax.legend(loc=1)
+                continue            
         ttl.set_text('Particle at time ' + str(plottimes[t]))
         return scat,
 

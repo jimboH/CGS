@@ -1,11 +1,14 @@
 import parcels
+import warnings
 import numpy as np
 from datetime import timedelta
 
 class kernel_file(parcels.ParticleFile):
     """Inherit from parcels.ParticleFile.
-    Add additional dimension: 'nd', and additional varaible: 'kernel_array' in netCDF file to save nd_array of kernels.
+    Add additional dimension: 'word_dim', and additional varaibles: 'word', 'meaning', 'particle_color'
+    in netCDF file to save the words, meanings and colors of kernels respectively.
     """
+    
     def __init__(self, name, particleset, outputdt=np.infty, write_ondelete=False):
         super(kernel_file,self).__init__(name, particleset, outputdt=outputdt, write_ondelete=write_ondelete)
         self.dataset.createDimension('word_dim',None)
@@ -15,7 +18,8 @@ class kernel_file(parcels.ParticleFile):
         
     def write(self, pset, time, sync=True, deleted_only=False):
         """Write function of class kernel_file.
-        save nd_array of kernels to netCDF file.
+        Overload write function from parcels.particlefile module.
+        Save words,meanings,particel colors in netCDF.
         """
         if isinstance(time, timedelta):
             time = time.total_seconds()
