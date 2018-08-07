@@ -1,5 +1,5 @@
 # CGS
-Contextual Geometric Structures using parcels
+Contextual Geometric Structures using parcels <https://github.com/OceanParcels/parcels>
 
 ### Simulation Goals
 The goals of CGS are the followings:  
@@ -16,4 +16,11 @@ In CGS, a word may have many meanings, but a particle can only have one word and
 ![](/image/word.jpg)  
 
 #### Meanings:
-In CGS, every meaning of a word is given a fitness value, which is used for genetic algorithm. Mutation occurs with given period and changes the meaning of a word to another meaning of the same word with possibility proportional to the meaning's fitness value. Therefore, if a meaning has a higher fitness value, the other meanings have higher chances to transform into this meaning.  
+In CGS, every meaning of a word is given a fitness value, which is used for genetic algorithm. Mutation occurs with given period and changes the meaning of a word to another meaning of the same word with possibility proportional to the meaning's fitness value. Therefore, if a meaning has a higher fitness value, the other meanings have higher chances to transform into this meaning.
+
+### Installation
+This project can only be installed in windows currently.  
+Please create a virtual environment first. Then install package with:
+	
+	pip install git+https://github.com/jimboH/CGS.git@master
+
