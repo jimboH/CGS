@@ -22,8 +22,9 @@ def get_install_requires():
         'scipy >= 0.16.0',
         'six >= 1.10.0',
         'xarray >= 0.5.1',
-        'pytest >= 2.7.0',
-        'nbval']
+        'nbval',
+        'ast',
+        'requests']
     return install_requires
 
 setup(name='CGS_parcels',
@@ -38,6 +39,7 @@ setup(name='CGS_parcels',
       zip_safe=False,
       python_requires='>=2.7, <3',
       dependency_links=['git+https://github.com/OceanParcels/parcels.git@master#egg=parcels-1.0'],
+      tests_require=['pytest >= 2.7.0'],
       install_requires=get_install_requires()
       )
 
