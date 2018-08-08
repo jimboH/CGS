@@ -302,7 +302,7 @@ class kernel_set(parcels.ParticleSet):
             ## Check if collsion conditions are met
             collision = self._collide(collision_thres)
             for cols in collision:
-                cols.word_state._transition()
+                cols.word_state.transition()
             ## Decrease FSM transforming probability according to decay rate
             self._decay_prob()
             ## Count the amounts of word_meaning kernels that are in different states

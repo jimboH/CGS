@@ -10,7 +10,7 @@ class CGS_field_initializer(widgets.Tab):
     def __init__(self,**kwargs):
         self._set_tab()
         style = {'description_width': 'initial'}
-        cchildren = [self._field_setting, self._particle_setting, self._simulation_setting, self._output_setting, \
+        children = [self._field_setting, self._particle_setting, self._simulation_setting, self._output_setting, \
                  self._word_setting]
         super(CGS_field_initializer,self).__init__(children=children,style=style, **kwargs)
         
@@ -84,8 +84,8 @@ class CGS_field_initializer(widgets.Tab):
         if word_meaning_freq_fit == None:
             raise RuntimeError('Please input word_meaning_freq_fit.')
         if self._field_setting.value == 'random':
-            xv = np.random.uniform(-1.0,1.0,[100,100])*5e-4
-            yv = np.random.uniform(-1.0,1.0,[100,100])*5e-4
+            xv = np.random.uniform(-1.0,1.0,[100,100])*2e-4
+            yv = np.random.uniform(-1.0,1.0,[100,100])*2e-4
         elif self._field_setting.value == 'vortex':
             omega = 2e-3
             x_pos = np.linspace(0.0,1.0,51,endpoint=False)[1:51]
