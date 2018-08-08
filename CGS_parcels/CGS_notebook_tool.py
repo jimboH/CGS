@@ -10,8 +10,8 @@ class CGS_field_initializer(widgets.Tab):
     def __init__(self,**kwargs):
         self._set_tab()
         style = {'description_width': 'initial'}
-        children = [self._field_setting, self._particle_setting, self._simulation_setting, self._output_setting, \
-                 self._animation_setting]
+        cchildren = [self._field_setting, self._particle_setting, self._simulation_setting, self._output_setting, \
+                 self._word_setting]
         super(CGS_field_initializer,self).__init__(children=children,style=style, **kwargs)
         
     def _set_tab(self):
@@ -21,25 +21,33 @@ class CGS_field_initializer(widgets.Tab):
         self.set_title(1,'Particle setting')
         self.set_title(2,'Simulation setting')
         self.set_title(3,'Output setting')
-        self.set_title(4,'Animation setting')
+        self.set_title(4,'Word setting')
         
         ## set widgets
         self._field_setting = widgets.Select(options=['random','vortex','self-defined'],description='Select a field setting: ',\
-                                            disabled=False,style=style)
-        self._particle_num = widgets.IntText(description='Number of particles initially: ',disabled=False,style=style)
+                                            disabled=False,value='random',style=style)
+        self._particle_num = widgets.IntText(description='Number of particles initially: ',disabled=False,value=100,style=style)
         self._particle_mode = widgets.Select(options=['random','middle','self-defined'],description=\
-                                                         'How particles are distributed initially: ',disables=False,style=style)
+                                    'How particles are distributed initially: ',disables=False,value='random',style=style)
         self._particle_setting = widgets.Accordion(children=[self._particle_num,self._particle_mode])
         self._particle_setting.set_title(0,'Num of particles')
         self._particle_setting.set_title(1,'Distribution mode of particles')
-        self._time_length = widgets.IntText(description='Simulation time length: ',disabled=False,style=style)
-        self._time_period = widgets.IntText(description='Simulation time period: ',disabled=False,style=style)
-        self._simulation_setting = widgets.Accordion(children=[self._time_length,self._time_period])
+        self._time_length = widgets.IntText(description='Simulation time length: ',disabled=False,value=200,style=style)
+        self._time_period = widgets.IntText(description='Simulation time period: ',disabled=False,value=5,style=style)
+        self._collision_threshold = widgets.FloatText(description='Particles collision threshold: ',disabled=False,value=0.0001,\
+                                                    style=style)
+        self._simulation_setting = widgets.Accordion(children=[self._time_length,self._time_period,self._collision_threshold])
         self._simulation_setting.set_title(0,'Time length')
         self._simulation_setting.set_title(1,'Time period')
-        self._output_setting = widgets.Text(description='Save output file to: ',disabled=False,style=style)
-        self._animation_setting = widgets.RadioButtons(options=['Yes','No'],description='Animation?',disabled=False\
-                                                           ,style=style)
+        self._simulation_setting.set_title(2,'Collision threshold')
+        self._output_setting = widgets.Text(description='Save output file to: ',disabled=False,style=style,\
+                                            layout=widgets.Layout(width='50%'),value='C:\Users\User\Downloads\example')
+        self._decay_rate = widgets.FloatText(description='Decay rate of transformation probability:',\
+                                           disabled=False,value=0.001,style=style,layout=widgets.Layout(width='40%'))
+        self._mutation_period = widgets.IntText(description='Mutation period of meanings: ',disabled=False,value=5,style=style)
+        self._word_setting = widgets.Accordion(children=[self._decay_rate,self._mutation_period])
+        self._word_setting.set_title(0,'State transformation probability decay rate')
+        self._word_setting.set_title(1,'Mutation period of meanings')
     
     @property
     def field_setting(self):
@@ -69,7 +77,7 @@ class CGS_field_initializer(widgets.Tab):
     def animation_setting(self):
         return self._animation_setting
     
-    def build(self,word_meaning_freq_fit=None,collision_thres=1e-4,mutation_period=5,field_set=None,particle_set=None,):
+    def build(self,word_meaning_freq_fit=None,collision_thres=1e-4,mutation_period=5,field_set=None,particle_set=None):
         """
         Function starting from initializing CGS_field to simulation.
         """
@@ -116,13 +124,22 @@ class CGS_field_initializer(widgets.Tab):
         
         if self._output_setting.value == '':
             raise RuntimeError('Please specify the output file path of simulation.')
+
+        if self._decay_rate.value < 0.0 or self._decay_rate.value > 0.5:
+            raise RuntimeError('Decay rate should be in the range from 0.0 to 0.5')
+            
+        if self._mutation_period.value == 0:
+            raise RuntimeError('Please specify the mutation period of meanings.')
+        
+        if self._collision_threshold.value < 0.0 or self._collision_threshold.value > 1e-3:
+            raise RuntimeError('Collision threshold should be in the range from 0.0 to 0.001')
      
         self.CGS = CGS_field(xv,yv)
         self.CGS.deploy_kernels(xpos,ypos,kernel)
         self.CGS.kset.set_kernel(word_meaning_freq_fit)
         
         self.CGS.simulate(self._time_length.value,self._time_period.value,self._output_setting.value,\
-                          collision_thres,mutation_period)
+                          self._collision_threshold.value,self._mutation_period.value)
     
     def plot(self):
         self.CGS.plot_wordfreq()

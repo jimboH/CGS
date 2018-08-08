@@ -1,4 +1,6 @@
 # Contextual Geometric Structures (CGS): a hybrid modeling approach
+Contextual Geometric Structures using parcels <https://github.com/OceanParcels/parcels>
+
 
 ### Simulation Goals
 The goals of this CGS-based project are the following:
@@ -28,3 +30,10 @@ Figure 1. Probabilities of transitions between active and inactive states.
 In CGS, every word:meaning combination (a single particle) is assigned a fitness value, which is used for the genetic algorithm component. Mutation occurs at a given rate (_u_) and changes the meaning of a word to another meaning of the same word with a probability proportional to the meaning's fitness value. 
 
 We can illustrate this by considering a group of meanings for a single word: if a given meaning has a higher fitness value, the other meanings have higher chances to transform into this meaning upon mutation.
+
+### Installation
+This project can only be installed in windows currently.  
+Please create a virtual environment first. Then install package with:
+	
+	pip install git+https://github.com/jimboH/CGS.git@master
+
