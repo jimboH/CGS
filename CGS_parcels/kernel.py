@@ -80,8 +80,12 @@ class kernel_set(parcels.ParticleSet):
     def __init__(self, fieldset, pclass=kernel, lon=[], lat=[], depth=None, time=None, repeatdt=None):
         super(kernel_set,self).__init__(fieldset=fieldset, pclass=pclass, lon=lon, lat=lat, depth=None, time=None, repeatdt=None)
     
-    def set_kernel(self,word_meaning_freq_fit,prob=0.5,ratio=0.5):  
+    def set_kernel(self,word_meaning_freq_fit,prob=0.5,decay_rate=0.01,lower_bound=0.1,ratio=0.5):  
+        """Assign each kernel within the field with word, meaning and fitness according to given frequency.
+        """
         self._set_particle_color(word_meaning_freq_fit)
+        self._prob_decay_rate = decay_rate
+        self._prob_lower_bound = lower_bound
         kernel_amount = len(self.particles)
         word_freq = [(word,word_attr[0]) for word,word_attr in word_meaning_freq_fit.items()]
         kernel_id_word = 0
@@ -148,7 +152,12 @@ class kernel_set(parcels.ParticleSet):
                     collision = np.append(collision,id2)
         collision = np.unique(collision)
         return collision
-    
+
+    def _decay_prob(self):
+        for particle in self.particles:
+            if particle.word_state.prob > self._prob_lower_bound+1e-3:
+                particle.word_state.prob -= self._prob_decay_rate
+            
     def count_states(self):
         meaning_states = {}
         
@@ -294,6 +303,8 @@ class kernel_set(parcels.ParticleSet):
             collision = self._collide(collision_thres)
             for cols in collision:
                 cols.word_state._transition()
+            ## Decrease FSM transforming probability according to decay rate
+            self._decay_prob()
             ## Count the amounts of word_meaning kernels that are in different states
             meaning_states = self.count_states()
             tot_counts = len(self.particles)
