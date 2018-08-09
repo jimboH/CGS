@@ -32,14 +32,17 @@ In CGS, every word:meaning combination (a single particle) is assigned a fitness
 We can illustrate this by considering a group of meanings for a single word: if a given meaning has a higher fitness value, the other meanings have higher chances to transform into this meaning upon mutation.
 
 ### Installation
-This project can only be installed in windows currently.  
+This package is currently only available for Windows. Please clone the repository to the Desktop and proceed with the installation:
+
 1. Please create a virtual environment first.  
 	
    		$ virtualenv environment_name --python=2.7 --no-site-packages  
+		
 2. Activate virtual environment.  
 	  
 		$ cd path_to_environment/Scripts  
     	$ activate
+	
 3. Then install package with:
 	
 		$ pip install git+https://github.com/jimboH/CGS.git@master --process-dependency-links
