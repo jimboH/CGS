@@ -83,6 +83,7 @@ class kernel_set(parcels.ParticleSet):
     def set_kernel(self,word_meaning_freq_fit,prob=0.5,decay_rate=0.01,lower_bound=0.1,ratio=0.5):  
         """Assign each kernel within the field with word, meaning and fitness according to given frequency.
         """
+        self._check_word_dict(word_meaning_freq_fit)
         self._set_particle_color(word_meaning_freq_fit)
         self._prob_decay_rate = decay_rate
         self._prob_lower_bound = lower_bound
@@ -111,6 +112,22 @@ class kernel_set(parcels.ParticleSet):
             kernel_id_word += word_num
         self._get_word_total_fitness(word_meaning_freq_fit)
         self._get_word_meaning(word_meaning_freq_fit)
+
+    def _check_word_dict(self,word_dict):
+        error_message = "words_meanings = {'apple':(0.3,[('red',0.15,20),('fruit',0.6,30),('eatable',0.25,5)]),'tomato':(0.8,[('red',0.3,20),('fruit',0.3,40),('vegetable',0.4,15)])}"
+        if len(word_dict.keys()) == 0:
+            raise ValueError('word_meaning_freq_fit cannot be empty.')
+        for key in word_dict.keys():
+            val = word_dict[key]
+            if len(val)!=2:
+                raise ValueError("word_meaning_freq_fit should be in the form like " + error_message)
+            mng = val[1]
+            if len(mng)==0:
+                raise ValueError("A word should have at least one meaning.")
+            for i in range(len(mng)):
+                mng_poss_fit = mng[i]
+                if len(mng_poss_fit)!=3:
+                    raise ValueError("word_meaning_freq_fit should be in the form like " + error_message)
     
     def _set_particle_color(self,word_meaning_freq_fit):
         word_meaning = [(word,meaning[0]) for word in word_meaning_freq_fit.keys() for meaning in word_meaning_freq_fit[word][1]]
