@@ -13,7 +13,7 @@ def get_install_requires():
         'jupyter',
         'ffmpeg-python',
         'matplotlib >= 2.0.2',
-        'netcdf4 >= 1.1.9',
+        'netcdf4 == 1.4.0',
         'numpy >= 1.9.1',
         'progressbar2',
         'py >= 1.4.27',
