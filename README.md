@@ -32,17 +32,23 @@ In CGS, every word:meaning combination (a single particle) is assigned a fitness
 We can illustrate this by considering a group of meanings for a single word: if a given meaning has a higher fitness value, the other meanings have higher chances to transform into this meaning upon mutation.
 
 ### Installation
-This package is currently only available for Windows. Please clone the repository to the Desktop and proceed with the installation:
-
+This project can only be installed in **windows** currently.     
+To work with this project, users have to install **python 2.7** first.
 1. Please create a virtual environment first.  
 	
-   		$ virtualenv environment_name --python=2.7 --no-site-packages  
-		
+   		$ virtualenv environment_name --python=2.7 --no-site-packages
+        
+        # For example, I create my virtual environment in C:\Users\User\Documents\parcels_package\venv_CGS, then the command is:  
+        virtualenv C:\Users\User\Documents\parcels_package\venv_CGS --python=2.7 --no-site-packages
 2. Activate virtual environment.  
 	  
 		$ cd path_to_environment/Scripts  
     	$ activate
-	
+        
+        # In my case, the command is:
+        cd C:\Users\User\Documents\parcels_package\venv_CGS\Scripts
+        activate
+        # After giving the commands above, users will find the virtual environment has been activated.
 3. Then install package with:
 	
 		$ pip install git+https://github.com/jimboH/CGS.git@master --process-dependency-links
