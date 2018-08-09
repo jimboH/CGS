@@ -32,7 +32,7 @@ In CGS, every word:meaning combination (a single particle) is assigned a fitness
 We can illustrate this by considering a group of meanings for a single word: if a given meaning has a higher fitness value, the other meanings have higher chances to transform into this meaning upon mutation.
 
 ### Installation
-This project can only be installed in **windows** currently.  
+This project can only be installed in **windows** currently.     
 To work with this project, users have to install **python 2.7** first.
 1. Please create a virtual environment first.  
 	
