@@ -31,10 +31,10 @@ class CGS_field:
 
         
         ## initialize parcels fields with lon and lat values set according to the values of len(x_vel) and len(y_vel)
-        field_x = parcels.Field(name='U',data=x_vel,lon=np.linspace(start=0,stop=1,num=len(x_vel[0])),\
-                                lat=np.linspace(start=0,stop=1,num=len(x_vel)))
-        field_y = parcels.Field(name='V',data=y_vel,lon=np.linspace(start=0,stop=1,num=len(y_vel[0])),\
-                                lat=np.linspace(start=0,stop=1,num=len(y_vel)))
+        field_x = parcels.Field(name='U',data=x_vel,lon=np.linspace(start=0,stop=1,num=x_vel.shape[0]),\
+                                lat=np.linspace(start=0,stop=1,num=x_vel.shape[1]))
+        field_y = parcels.Field(name='V',data=y_vel,lon=np.linspace(start=0,stop=1,num=y_vel.shape[0]),\
+                                lat=np.linspace(start=0,stop=1,num=y_vel.shape[1]))
         
         ## initialize parcels fieldset with fields created above
         fieldset = parcels.FieldSet(U=field_x,V=field_y)
