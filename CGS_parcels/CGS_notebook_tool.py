@@ -82,16 +82,16 @@ class CGS_field_initializer(widgets.Tab):
         Function starting from initializing CGS_field to simulation.
         """
         if word_meaning_freq_fit == None:
-            raise RuntimeError('Please input word_meaning_freq_fit.')
+            raise ValueError('Please input word_meaning_freq_fit.')
         if self._field_setting.value == 'random':
             xv = np.random.uniform(-1.0,1.0,[100,100])*2e-4
             yv = np.random.uniform(-1.0,1.0,[100,100])*2e-4
         elif self._field_setting.value == 'vortex':
             omega = 2e-3
-            x_pos = np.linspace(0.0,1.0,51,endpoint=False)[1:51]
-            y_pos = np.linspace(0.0,1.0,51,endpoint=False)[1:51]
-            xv = omega*x_pos
-            yv = omega*y_pos
+            x_pos = np.arange(400)*0.0025 - 0.5
+            y_pos = np.arange(400)*0.0025 - 0.5
+            xv = omega * np.reshape(x_pos,[20,20])
+            yv = omega * np.reshape(y_pos,[20,20])
         else:
             try:
                 xv,yv = field_set
@@ -101,7 +101,7 @@ class CGS_field_initializer(widgets.Tab):
                 raise TypeError('Please input field_set or select other pre-defined field_set mode.')
             
         if self._particle_num.value == 0:
-            raise RuntimeError('Please specify the number of particles in the field.')
+            raise ValueError('Please specify the number of particles in the field.')
             
         if self._particle_mode.value == 'random':
             xpos = np.random.rand(self._particle_num.value)
@@ -118,21 +118,21 @@ class CGS_field_initializer(widgets.Tab):
                 raise TypeError('Please input particle_set or select other pre-defined particle_set mode.')
         
         if self._time_length.value == 0:
-            raise RuntimeError('Please specify the time length of simulation.')
+            raise ValueError('Please specify the time length of simulation.')
         if self._time_period.value == 0:
-            raise RuntimeError('Please specify the time period of simulation.')
+            raise ValueError('Please specify the time period of simulation.')
         
         if self._output_setting.value == '':
-            raise RuntimeError('Please specify the output file path of simulation.')
+            raise ValueError('Please specify the output file path of simulation.')
 
         if self._decay_rate.value < 0.0 or self._decay_rate.value > 0.5:
-            raise RuntimeError('Decay rate should be in the range from 0.0 to 0.5')
+            raise ValueError('Decay rate should be in the range from 0.0 to 0.5')
             
         if self._mutation_period.value == 0:
-            raise RuntimeError('Please specify the mutation period of meanings.')
+            raise ValueError('Please specify the mutation period of meanings.')
         
         if self._collision_threshold.value < 0.0 or self._collision_threshold.value > 1e-3:
-            raise RuntimeError('Collision threshold should be in the range from 0.0 to 0.001')
+            raise ValueError('Collision threshold should be in the range from 0.0 to 0.001')
      
         self.CGS = CGS_field(xv,yv)
         self.CGS.deploy_kernels(xpos,ypos,kernel)
