@@ -87,7 +87,7 @@ class CGS_field_initializer(widgets.Tab):
             xv = np.random.uniform(-1.0,1.0,[100,100])*2e-4
             yv = np.random.uniform(-1.0,1.0,[100,100])*2e-4
         elif self._field_setting.value == 'vortex':
-            omega = 2e-3
+            omega = 4e-4
             x_pos = np.arange(400)*0.0025 - 0.5
             y_pos = np.arange(400)*0.0025 - 0.5
             xv = omega * np.reshape(x_pos,[20,20])
